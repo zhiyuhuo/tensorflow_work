@@ -115,6 +115,7 @@ def get_lm_input_data(N):
     
     chunk_in = []
     words_in = []
+    all_in = []
     len_words = []
     rm_out = []
     obj_out = []
@@ -145,9 +146,25 @@ def get_lm_input_data(N):
 	        mat_words.append([0.0]*D_words)
 	    words_in.append(mat_words)
 	else:
-	    D_words = N_max_seq_len
 	    mat_words = mat_words[0:N_max_seq_len]
 	    words_in.append(mat_words)
+	    
+	# the all-in-one input feature
+	mat_all = []
+        if len(mat_words) < N_max_seq_len:
+	    D_words = len(mat_words[0])
+	    len_words.append(len(mat_words))
+	    
+	    for k in range(len(mat_words)):
+	        mat_all.append(vec_chunk + mat_words[k])
+	    
+	    for k in range(len(mat_words), N_max_seq_len):
+	        mat_all.append(vec_chunk + [0.0]*D_words)
+	    all_in.append(mat_all)
+	else:
+	    for k in range(len(mat_words)):
+	        mat_all.append(vec_chunk + mat_words[k])
+	    all_in.append(mat_all)
 	    
 	# the output label of room
 	rm_out.append(vec_rm)
@@ -164,10 +181,10 @@ def get_lm_input_data(N):
 	# the output label of target
 	tar_out.append(vec_tar)
         
-    return chunk_in, words_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words
+    return chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words
  
 
 if __name__ == "__main__":
-    chunk_in, words_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(818)
+    chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(818)
     
     
