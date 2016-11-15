@@ -1,0 +1,14 @@
+chunkdic:
+FURRP,FURTP,IRMRP,OBTP,ORMRP,ORMTP,N/A,
+worddic:
+a,about,again,against,ahead,and,are,at,back,be,bed,bedroom,behind,by,case,chairs,come,couch,directly,door,end,enter,far,find,fork,forward,front,glasses,go,halfway,hit,in,into,is,laptop,left,living,monitor,move,mug,nightstand,of,on,right,room,side,statue,straight,table,take,the,then,there,through,to,top,turn,until,walk,wall,was,will,with,you,your,N/A,
+roomdic:
+bedroom,living room,
+objdic:
+fork,glasses case,laptop,monitor,mug,statue,
+refdic:
+bed,chair,couch,move,robot,room,wall,
+dirdic:
+back,beside,center,front,left,right,
+tardic:
+table,

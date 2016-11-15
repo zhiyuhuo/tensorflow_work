@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import random
 
 def read_array_from_string(cstr):
     res = [float(s) for s in cstr.split('  ')]
@@ -110,7 +111,7 @@ def read_a_data_file(filename):
 	    
     return vec_chunk, mat_words, vec_rm, vec_obj, vec_ref, vec_dir, vec_tar
   
-def get_lm_input_data(N):
+def get_lm_input_data(NList):
     N_max_seq_len = 10
     
     chunk_in = []
@@ -123,8 +124,9 @@ def get_lm_input_data(N):
     dir_out = []
     tar_out = []
   
-    for i in range(1,N+1):
-        filename = "vec/" + str(i) + ".txt"
+    
+    for i in range(len(NList)):
+        filename = "vec/" + str(NList[i]) + ".txt"
         vec_chunk, mat_words, vec_rm, vec_obj, vec_ref, vec_dir, vec_tar = read_a_data_file(filename)
         #print(vec_chunk)
         #print(mat_words)
@@ -203,8 +205,114 @@ def get_lm_input_data(N):
 
     return chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words
  
+def get_lm_train_data():
+    tralist = []
+    for i in range(1,818/3 + 1):
+        tralist = tralist + [i * 3];
+    for i in range(1,818/3 + 1):
+        tralist = tralist + [i * 3 - 1];
+        
+    print tralist
+    chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(tralist)
+    return chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words
+    #print(all_in)
+    
+def get_lm_test_data():
+    teslist = []
+    for i in range(1,818/3 + 1):
+        teslist = teslist + [i * 3];
+    for i in range(1,818/3 + 1):
+        teslist = teslist + [i * 3 - 2];
+        
+    print teslist
+    chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(teslist)
+    return chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words
+    #print(all_in)
+    
+# ====================
+#  import language feature data
+# ====================
+class LanguageSequenceData(object):
+    """ Generate sequence of data with dynamic length.
+    This class generate samples for training:
+
+    NOTICE:
+    We have to pad each sequence to reach 'max_seq_len' for TensorFlow
+    consistency (we cannot feed a numpy array with inconsistent
+    dimensions). The dynamic calculation will then be perform thanks to
+    'seqlen' attribute that records every actual sequence length.
+    """
+    """
+    NOTICE:
+    We have to pad each sequence to reach 'max_seq_len' for TensorFlow
+    consistency (we cannot feed a numpy array with inconsistent
+    dimensions). The dynamic calculation will then be perform thanks to
+    'seqlen' attribute that records every actual sequence length.
+    """
+    
+    def __init__(self, data_group='train', labeltype='target_room', max_seq_len=10):
+        self.data = []
+        self.labels = []
+        self.seqlen = []
+        n_samples = 818
+        if data_group == 'train':
+            chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_train_data()
+        
+        if data_group == 'test':
+            chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_test_data()
+        
+        n_samples = len(all_in)
+        print(n_samples)
+        #print(len(all_in))
+        #print(len(len_words))
+        #print(len(rm_out))
+        
+        #print(all_in[1])
+        #print(len_words[1])
+        #print(rm_out[1])
+        
+        label = {'target_room': rm_out,
+		'target_object': obj_out,
+		'reference': ref_out,
+		'direction': dir_out,
+		'target': tar_out,
+		}[labeltype]
+        
+        n_classes = len(label[0])
+        print('class number: ' + str(n_classes))
+        for n in range(n_samples):  
+	    self.data.append(all_in[n])
+            self.labels.append(label[n])
+            self.seqlen.append(len_words[n])
+        self.batch_id = 0
+
+    def next(self, batch_size):
+        """ Return a batch of data. When dataset end is reached, start over.
+        """
+        L = len(self.data)
+        if self.batch_id == L:
+            self.batch_id = 0
+        batch_data = (self.data[self.batch_id:min(self.batch_id +
+                                                  batch_size, L)])
+        batch_labels = (self.labels[self.batch_id:min(self.batch_id +
+                                                  batch_size, L)])
+        batch_seqlen = (self.seqlen[self.batch_id:min(self.batch_id +
+                                                  batch_size, L)])
+        self.batch_id = min(self.batch_id + batch_size, L)
+        return batch_data, batch_labels, batch_seqlen
 
 if __name__ == "__main__":
-    chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(818)
-    #print(len(all_in[0][7]))
+    tralist = []
+    teslist = []
+    for i in range(1,818/3 + 1):
+        tralist = tralist + [i * 3];
+    for i in range(1,818/3 + 1):
+        tralist = tralist + [i * 3 - 1];
+    for i in range(1,818/3 + 1):
+        teslist = teslist + [i * 3 - 2];
+        
+    print tralist
+    print teslist
+    chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(tralist)
+    print(all_in[0])
     

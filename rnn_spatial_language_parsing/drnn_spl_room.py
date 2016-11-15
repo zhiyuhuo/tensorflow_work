@@ -12,66 +12,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 import random
-from data_input import get_lm_input_data 
-
-
-# ====================
-#  import binary language feature data
-# ====================
-class LanguageSequenceData_RM(object):
-    """ Generate sequence of data with dynamic length.
-    This class generate samples for training:
-
-    NOTICE:
-    We have to pad each sequence to reach 'max_seq_len' for TensorFlow
-    consistency (we cannot feed a numpy array with inconsistent
-    dimensions). The dynamic calculation will then be perform thanks to
-    'seqlen' attribute that records every actual sequence length.
-    """
-    """
-    NOTICE:
-    We have to pad each sequence to reach 'max_seq_len' for TensorFlow
-    consistency (we cannot feed a numpy array with inconsistent
-    dimensions). The dynamic calculation will then be perform thanks to
-    'seqlen' attribute that records every actual sequence length.
-    """
-    
-    def __init__(self, max_seq_len=10):
-        self.data = []
-        self.labels = []
-        self.seqlen = []
-        n_samples = 818
-        chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(n_samples)
-        
-        #print(len(all_in))
-        #print(len(len_words))
-        #print(len(rm_out))
-        
-        #print(all_in[1])
-        #print(len_words[1])
-        #print(rm_out[1])
-        
-        for n in range(n_samples):
-	    self.data.append(all_in[n])
-            self.labels.append(rm_out[n])
-            self.seqlen.append(len_words[n])
-        self.batch_id = 0
-
-    def next(self, batch_size):
-        """ Return a batch of data. When dataset end is reached, start over.
-        """
-        L = len(self.data)
-        if self.batch_id == L:
-            self.batch_id = 0
-        batch_data = (self.data[self.batch_id:min(self.batch_id +
-                                                  batch_size, L)])
-        batch_labels = (self.labels[self.batch_id:min(self.batch_id +
-                                                  batch_size, L)])
-        batch_seqlen = (self.seqlen[self.batch_id:min(self.batch_id +
-                                                  batch_size, L)])
-        self.batch_id = min(self.batch_id + batch_size, L)
-        return batch_data, batch_labels, batch_seqlen
-
+from data_input import LanguageSequenceData 
 
 # ==========
 #   MODEL
@@ -89,8 +30,8 @@ seq_max_len = 10 # Sequence max length
 n_hidden = 512 # hidden layer num of features
 n_classes = 3 # linear sequence or not
 
-trainset = LanguageSequenceData_RM(seq_max_len)
-testset = LanguageSequenceData_RM(seq_max_len)
+trainset = LanguageSequenceData('train', 'target_room')
+testset = LanguageSequenceData('test', 'target_room')
 
 # tf Graph input
 x = tf.placeholder("float", [None, seq_max_len, n_dim])
@@ -169,7 +110,7 @@ if __name__ == "__main__":
     # Initializing the variables
     init = tf.initialize_all_variables()
     
-    if _iftrain == 0:
+    if _iftrain == 1:
 	# Launch the graph
 	with tf.Session() as sess:
 	    sess.run(init)
