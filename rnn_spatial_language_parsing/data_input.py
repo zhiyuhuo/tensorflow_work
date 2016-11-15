@@ -220,8 +220,6 @@ def get_lm_train_data():
 def get_lm_test_data():
     teslist = []
     for i in range(1,818/3 + 1):
-        teslist = teslist + [i * 3];
-    for i in range(1,818/3 + 1):
         teslist = teslist + [i * 3 - 2];
         
     print teslist
