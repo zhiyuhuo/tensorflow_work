@@ -1,2 +1,2 @@
-model_checkpoint_path: "model_tar.ckpt"
-all_model_checkpoint_paths: "model_tar.ckpt"
+model_checkpoint_path: "model_obj.ckpt"
+all_model_checkpoint_paths: "model_obj.ckpt"

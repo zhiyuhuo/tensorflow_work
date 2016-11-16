@@ -20,9 +20,9 @@ from data_input import LanguageSequenceData
 # ==========
 
 # Parameters
-learning_rate = 0.001
-training_iters = 100000
-batch_size = 32
+learning_rate = 0.005
+training_iters = 10000
+batch_size = 8
 display_step = 10
 
 # Network Parameters
@@ -105,7 +105,7 @@ optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minim
 correct_pred = tf.equal(tf.argmax(pred,1), tf.argmax(y,1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
-_iftrain = 0    
+_iftrain = 1    
     
 if __name__ == "__main__":
     # Initializing the variables

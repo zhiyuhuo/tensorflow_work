@@ -227,9 +227,18 @@ def get_lm_test_data():
     return chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words
     #print(all_in)
     
+def get_lm_all_data():
+    alllist = []
+    for i in range(1,818+1):
+        alllist = alllist + [i];
+        
+    print alllist
+    chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_input_data(alllist)
+    return chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words
+    
 # ====================
 #  import language feature data
-# ====================
+# ====================get_lm_all_data
 class LanguageSequenceData(object):
     """ Generate sequence of data with dynamic length.
     This class generate samples for training:
@@ -258,6 +267,9 @@ class LanguageSequenceData(object):
         
         if data_group == 'test':
             chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_test_data()
+            
+        if data_group == 'all':
+            chunk_in, words_in, all_in, rm_out, obj_out, ref_out, dir_out, tar_out, len_words = get_lm_all_data()
         
         n_samples = len(all_in)
         print(n_samples)

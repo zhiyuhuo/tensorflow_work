@@ -9,10 +9,8 @@ def read_test_res(filename):
         if len(lines) == 2:
 	    res_str = (lines[0]).split(' ')
 	    res_str = res_str[0:-2]
-	    print(res_str)
 	    label_str = lines[1].split(' ')
 	    label_str = label_str[0:-2]
-            print(label_str)
             res = map(int, res_str)
             label = map(int, label_str)
     return res, label
@@ -37,12 +35,18 @@ print(N)
 
 res = [0] * N
 for n in range(N):
-    if res_room[n] == label_room[n] and \
-       res_object[n] == label_object[n] and \
-       res_reference[n] == label_reference[n] and \
-       res_direction[n] == label_direction[n] and \
-       res_target[n] == label_target[n]:
-	 res[n] = 1
+    if res_room[n] == label_room[n]:
+       if res_room[n] != 2:
+	   res[n] = 1
+       else:
+           if res_object[n] == label_object[n]:
+	       if res_object[n] != 6:
+		   res[n] = 1
+	       else:
+		   if res_reference[n] == label_reference[n] and \
+                      res_direction[n] == label_direction[n] and \
+                      res_target[n] == label_target[n]:
+	               res[n] = 1
 print res
 acc = float(sum(res)) / N
 print acc
