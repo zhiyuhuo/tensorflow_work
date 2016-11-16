@@ -11,6 +11,7 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 from __future__ import print_function
 
 import tensorflow as tf
+import numpy
 import random
 from data_input import LanguageSequenceData 
 
@@ -156,8 +157,17 @@ if __name__ == "__main__":
         print(len(batch_seqlen))
         
         saver.restore(sess, "./model_rm.ckpt")
-        print("Testing Result:", sess.run(tf.argmax(pred,1), feed_dict={x: batch_x, y: batch_y, seqlen: batch_seqlen}))
         print("Testing Accuracy 1:", sess.run(accuracy, feed_dict={x: batch_x, y: batch_y, seqlen: batch_seqlen}))
+        
+        res = sess.run(tf.argmax(pred,1), feed_dict={x: batch_x, y: batch_y, seqlen: batch_seqlen})
+        groundtruth_label = sess.run(tf.argmax(y,1), feed_dict={y: batch_y})
+        print("Testing Result:", zip(res, groundtruth_label))
+	save_file = open('test_room.out', 'w')
+	for r in res:
+            save_file.write("%d " % r)
+        save_file.write("\n")
+        for g in groundtruth_label:
+            save_file.write("%d " % g)
         
 	
 	

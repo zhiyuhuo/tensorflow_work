@@ -104,7 +104,7 @@ optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minim
 correct_pred = tf.equal(tf.argmax(pred,1), tf.argmax(y,1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
-_iftrain = 1    
+_iftrain = 0   
     
 if __name__ == "__main__":
     # Initializing the variables
@@ -150,9 +150,19 @@ if __name__ == "__main__":
     
     saver = tf.train.Saver(write_version=tf.train.SaverDef.V2) 
     with tf.Session() as sess:
-        batch_x, batch_y, batch_seqlen = trainset.next(818)
+        batch_x, batch_y, batch_seqlen = testset.next(818)
         saver.restore(sess, "./model_obj.ckpt")
         print("Testing Accuracy ALL:", sess.run(accuracy, feed_dict={x: batch_x, y: batch_y, seqlen: batch_seqlen}))
+        
+        res = sess.run(tf.argmax(pred,1), feed_dict={x: batch_x, y: batch_y, seqlen: batch_seqlen})
+        groundtruth_label = sess.run(tf.argmax(y,1), feed_dict={y: batch_y})
+        print("Testing Result:", zip(res, groundtruth_label))
+	save_file = open('test_object.out', 'w')
+	for r in res:
+            save_file.write("%d " % r)
+        save_file.write("\n")
+        for g in groundtruth_label:
+            save_file.write("%d " % g)
         
 	
 	
