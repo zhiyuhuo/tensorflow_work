@@ -1,0 +1,9 @@
+Train=544
+Test=272
+Iter=10000
+
+room: Acc=0.985294
+object: Acc=0.970588
+reference: Acc=0.970588
+direction: Acc=0.959559
+Target: Acc=1.0
